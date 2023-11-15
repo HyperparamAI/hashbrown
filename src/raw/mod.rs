@@ -192,7 +192,7 @@ impl ProbeSeq {
 // Workaround for emscripten bug emscripten-core/emscripten-fastcomp#258
 #[cfg_attr(target_os = "emscripten", inline(never))]
 #[cfg_attr(not(target_os = "emscripten"), inline)]
-fn capacity_to_buckets(cap: usize) -> Option<usize> {
+pub fn capacity_to_buckets(cap: usize) -> Option<usize> {
     debug_assert_ne!(cap, 0);
 
     // For small tables we require at least 1 empty bucket so that lookups are
@@ -233,14 +233,14 @@ fn bucket_mask_to_capacity(bucket_mask: usize) -> usize {
 /// Helper which allows the max calculation for ctrl_align to be statically computed for each T
 /// while keeping the rest of `calculate_layout_for` independent of `T`
 #[derive(Copy, Clone)]
-struct TableLayout {
+pub struct TableLayout {
     size: usize,
     ctrl_align: usize,
 }
 
 impl TableLayout {
     #[inline]
-    const fn new<T>() -> Self {
+    pub const fn new<T>() -> Self {
         let layout = Layout::new::<T>();
         Self {
             size: layout.size(),
@@ -253,7 +253,7 @@ impl TableLayout {
     }
 
     #[inline]
-    fn calculate_layout_for(self, buckets: usize) -> Option<(Layout, usize)> {
+    pub fn calculate_layout_for(self, buckets: usize) -> Option<(Layout, usize)> {
         debug_assert!(buckets.is_power_of_two());
 
         let TableLayout { size, ctrl_align } = self;
